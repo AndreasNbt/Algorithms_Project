@@ -3,6 +3,11 @@
 // email: andreasn@csd.auth.gr
 
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
 /**
  * The main class which takes in the arguments and calls the cost calculator.
  */
@@ -13,27 +18,32 @@ public class MergeSort {
      * @param args the input arguments
      */
     public static void main(String[] args) {
-        String arr = args[0].trim(); //Removes white spaces from the front and the end
+        try {
+            File file = new File(args[0]);
+            Scanner scanner = new Scanner(file);
 
-        String[] sArr = arr.split(" "); //Argument is turned into a string array using the str.split() function.
+            ArrayList<Integer> numbers = new ArrayList<>();
 
-        int[] iArr = new int[sArr.length];
-        for (int i=0;i<iArr.length;i++)
-            iArr[i] = Integer.parseInt(sArr[i]); //Using the Integer.parseInt(string) function, the corresponding int array is created
+            while (scanner.hasNextInt()) {
+                numbers.add(scanner.nextInt());
+            }
 
 
-        Cost_Calculator a = new Cost_Calculator();
-        a.mergeSort(iArr, iArr.length); //The function which will print the necessary cost is called
+            Cost_Calculator a = new Cost_Calculator();
+            a.mergeSort(numbers,numbers.size()); //The function which will print the necessary cost is called
 
-        System.out.println("Total cost: " + a.getTotalCost());
-
+            System.out.println("Total cost: " + a.getTotalCost());
+        }
+        catch  (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }
 
 class Cost_Calculator {
 
-    private int specialInversions; //inversions at which left[i] == right[j] + 1
-    private int normalInversions;
+    private long specialInversions; //inversions at which left[i] == right[j] + 1
+    private long normalInversions;
 
     public Cost_Calculator() {
         specialInversions = 0;
@@ -46,7 +56,7 @@ class Cost_Calculator {
      * a normal inversion 3.
      * @return the total cost.
      */
-    public int getTotalCost() {
+    public long  getTotalCost() {
         return normalInversions *3 + specialInversions *2;
     }
 
@@ -56,22 +66,22 @@ class Cost_Calculator {
      * The mergeSort function is a recursive function that breaks the array in half repetitively until its size becomes
      * 1, then stores each half in the temporary left and right arrays and calls the merge function in which the
      * sorting happens.
-     * The code was taken by this website https://www.baeldung.com/java-merge-sort with a few modifications.
+     * The code was taken by this website https://www.baeldung.com/java-merge-sort with  modifications to take an ArrayList
+     * instead of an array and also to calculate the number of both normal and special case inversions.
      *
-     * @param a    the array which is getting sorted
-     * @param size the array's size.
+     * @param a    the arraylist which is getting sorted
+     * @param size the arraylist's size.
      */
-    public void mergeSort(int[] a, int size) {
+    public void mergeSort(ArrayList<Integer> a,int size) {
         if (size < 2) {
             return ;
         }
-        int mid = size / 2;
-        int[] left = new int[mid];
-        int[] right = new int[size - mid];
 
-        System.arraycopy(a, 0, left, 0, mid);
-        if (size - mid >= 0)
-            System.arraycopy(a, mid, right, 0, size - mid);
+        int mid = size / 2;
+
+
+        ArrayList<Integer> left = new ArrayList<>(a.subList(0, mid));
+        ArrayList<Integer> right = new ArrayList<>(a.subList(mid,size));
 
         mergeSort(left, mid); //Recursive call for the left half
         mergeSort(right, size - mid); //Recursive call the right half
@@ -83,9 +93,10 @@ class Cost_Calculator {
     /**
      * The merge function is responsible for merging the two arrays created in the mergeSort function
      * and, in the same time, sorting them.
-     * It also calculates the cost that is required via incrementing the cost member variable.
-     * The code was taken by this website https://www.baeldung.com/java-merge-sort with a few modifications
-     * in order to calculate the cost.
+     * It calculates the number of normal and special case inversions by incrementing the normalInversions and
+     * specialInversions member variables.
+     ** The code was taken by this website https://www.baeldung.com/java-merge-sort with  modifications to take an ArrayList
+     *  instead of an array and also to calculate the number of both normal and special case inversions.
      *
      * @param a         the array which is getting sorted
      * @param left      left array created in the mergeSort function
@@ -93,32 +104,36 @@ class Cost_Calculator {
      * @param sizeLeft  the size of the left array
      * @param sizeRight the size of the right array
      */
-    public void merge(int[] a, int[] left, int[] right, int sizeLeft, int sizeRight) {
+    public void merge(ArrayList<Integer> a, ArrayList<Integer> left, ArrayList<Integer> right, int sizeLeft, int sizeRight) {
         int i = 0, j = 0, k = 0;
+
         while (i < sizeLeft && j < sizeRight) {
-            if (left[i] <= right[j]) {
-                a[k++] = left[i++];
+            if (left.get(i) <= right.get(j)) {
+                a.set(k++,left.get(i++));
             }
-            else if (left[i] == right[j] + 1) { //special case inversion
-                a[k++] = right[j++];
+            else if (left.get(i) == (right.get(j) + 1)) { //special case inversion
+                a.set(k++,right.get(j++));
                 int t = i;
-                while (t<sizeLeft && left[t] == left[i]) { //checks if more elements are equal to left[i] to the right and increments the specialInversions variable.
+                while (t<sizeLeft && left.get(t).equals(left.get(i))) { //checks if more elements are equal to left[i] to the right and increments the specialInversions variable.
                     specialInversions++;
                     t++;
                 }
                 normalInversions+=(sizeLeft-t); //Rest of the elements are bigger than left[i] so they count as normal inversions.
             }
             else {
-                a[k++] = right[j++];
+                a.set(k++, right.get(j++));
                 normalInversions += (sizeLeft-i); //all elements to the right of left[i] are bigger than right[j] since the array is sorted
                 // so they count as inversions.
             }
         }
+
         while (i < sizeLeft) {
-            a[k++] = left[i++];
+            a.set(k++, left.get(i++));
         }
         while (j < sizeRight) {
-            a[k++] = right[j++];
+            a.set(k++,right.get(j++));
         }
+
+
     }
 }
