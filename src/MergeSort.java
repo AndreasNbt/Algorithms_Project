@@ -14,6 +14,7 @@ import java.util.Scanner;
 public class MergeSort {
     /**
      * The entry point of application.
+     * The program takes in a file name as an argument and reads the context of it.
      *
      * @param args the input arguments
      */
@@ -53,7 +54,7 @@ class Cost_Calculator {
 
     /**
      * Calculates the total cost of all the inversions. The cost of a special case inversion is 3 and of
-     * a normal inversion 3.
+     * a normal inversion 2.
      * @return the total cost.
      */
     public long  getTotalCost() {
@@ -63,7 +64,7 @@ class Cost_Calculator {
 
 
     /**
-     * The mergeSort function is a recursive function that breaks the array in half repetitively until its size becomes
+     * The mergeSort function is a recursive function that breaks the arraylist in half repetitively until its size becomes
      * 1, then stores each half in the temporary left and right arrays and calls the merge function in which the
      * sorting happens.
      * The code was taken by this website https://www.baeldung.com/java-merge-sort with  modifications to take an ArrayList
@@ -91,7 +92,7 @@ class Cost_Calculator {
     }
 
     /**
-     * The merge function is responsible for merging the two arrays created in the mergeSort function
+     * The merge function is responsible for merging the two arraylists created in the mergeSort function
      * and, in the same time, sorting them.
      * It calculates the number of normal and special case inversions by incrementing the normalInversions and
      * specialInversions member variables.
