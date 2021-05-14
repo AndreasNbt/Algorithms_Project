@@ -53,8 +53,8 @@ class Cost_Calculator {
 
 
     /**
-     * Calculates the total cost of all the inversions. The cost of a special case inversion is 3 and of
-     * a normal inversion 2.
+     * Calculates the total cost of all the inversions. The cost of a special case inversion is 2 and of
+     * a normal inversion 3.
      * @return the total cost.
      */
     public long  getTotalCost() {
